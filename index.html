@@ -36,8 +36,9 @@
             container.innerHTML = ""; 
             
             markets.forEach(market => {
-                const currentPct = (parseFloat(market.currentOdds) * 100).toFixed(1) + "%";
-                const startPct = (parseFloat(market.startingOdds) * 100).toFixed(1) + "%";
+                // Check if data is "N/A" before trying to do math on it
+                const currentPct = market.currentOdds === "N/A" ? "N/A" : (parseFloat(market.currentOdds) * 100).toFixed(1) + "%";
+                const startPct = market.startingOdds === "N/A" ? "N/A" : (parseFloat(market.startingOdds) * 100).toFixed(1) + "%";
 
                 const card = `
                     <div class="market-card">
