@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Polymarket Odds</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .market-card { border-bottom: 1px solid #ddd; padding: 15px 0; }
+        .market-card:last-child { border-bottom: none; }
+        .odds { display: flex; gap: 20px; font-size: 18px; margin-top: 10px; }
+        .current-odds { color: #28a745; font-weight: bold; }
+        .starting-odds { color: #6c757d; text-decoration: line-through; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Live Market Odds</h1>
+    <p>Data refreshes every time you load the page.</p>
+    <div id="markets-container">Loading data...</div>
+</div>
+
+<script>
+    // REPLACE THIS URL WITH YOUR WORKER URL FROM STEP 1
+    const WORKER_URL = "https://polymarket-api-worker.princecampbellnyc.workers.dev/";
+
+    async function loadMarkets() {
+        const container = document.getElementById('markets-container');
+        
+        try {
+            const response = await fetch(WORKER_URL);
+            const markets = await response.json();
+            
+            container.innerHTML = ""; 
+            
+            markets.forEach(market => {
+                const currentPct = (parseFloat(market.currentOdds) * 100).toFixed(1) + "%";
+                const startPct = (parseFloat(market.startingOdds) * 100).toFixed(1) + "%";
+
+                const card = `
+                    <div class="market-card">
+                        <h3>${market.title}</h3>
+                        <div class="odds">
+                            <span class="current-odds">Current: ${currentPct}</span>
+                            <span class="starting-odds">Started at: ${startPct}</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        } catch (error) {
+            container.innerHTML = "<p>Error loading data. Please try again later.</p>";
+        }
+    }
+
+    loadMarkets();
+</script>
+
+</body>
+</html>
